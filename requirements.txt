@@ -1,0 +1,5 @@
+sqlalchemy
+sqlalchemy-utils
+requests
+psycopg2
+schedule
