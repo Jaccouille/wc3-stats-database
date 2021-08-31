@@ -1,5 +1,6 @@
 from sqlalchemy import (
     create_engine,
+    inspect,
     Table,
     Column,
     Integer,
@@ -10,8 +11,11 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
+from logging import getLogger
 
-DB_NAME = "testdb"
+logger = getLogger(__name__)
+
+DB_NAME = "testdb2"
 USER = "jaccouille"
 PASS = "root"
 
@@ -39,12 +43,28 @@ def drop_table(conn, tablename, engine):
     table.drop(checkfirst=True)
 
 def init_table(engine):
-    DailyRecord.__table__.create(engine, checkfirst=True)
+    try:
+        DailyRecord.__table__.create(engine, checkfirst=True)
+    except Exception as e:
+        logger.error(str(e))
+    else:
+        logger.info(f"Created table {DailyRecord.__tablename__}")
 
-def insert_daily_daily_record(daily_record):
+def init_database(engine):
+    try:
+        create_database(engine.url)
+    except Exception as e:
+        logger.error(str(e))
+    else:
+        logger.info(f"Created database {DB_NAME}")
+
+def insert_daily_record(daily_record):
     engine = create_engine(f"postgresql+psycopg2://{USER}:{PASS}@localhost/{DB_NAME}")
     if not database_exists(engine.url):
-        create_database(engine.url)
+        init_database(engine)
+
+    if not inspect(engine).has_table(DailyRecord.__tablename__):
+        init_table(engine)
 
     with engine.connect() as conn:
-        conn.execute(DailyRecord.__table__.inert(), daily_record)
+        conn.execute(DailyRecord.__table__.insert(), daily_record)
