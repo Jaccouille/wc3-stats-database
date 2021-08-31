@@ -1,0 +1,8 @@
+-r requirements.test.txt
+
+# Debug Tools
+ipdb
+ipdbplugin
+ipython
+flake8
+black
