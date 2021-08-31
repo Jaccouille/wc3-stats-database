@@ -16,7 +16,7 @@ if not log_dir.is_dir():
     log_dir.mkdir()
 
 logging.basicConfig(
-    filename= str(log_dir / "daily_record.log"),
+    filename=str(log_dir / "daily_record.log"),
     format="%(asctime)s:%(levelname)s:%(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.DEBUG,
@@ -28,10 +28,10 @@ load_dotenv()
 
 try:
     URL_ARGS = {
-        "map":  os.environ["MAP"],
-        "season":  os.environ["SEASON"],
-        "limit":  os.environ["LIMIT"],
-        "mode":  os.environ["MODE"],
+        "map": os.environ["MAP"],
+        "season": os.environ["SEASON"],
+        "limit": os.environ["LIMIT"],
+        "mode": os.environ["MODE"],
     }
 except KeyError as e:
     logger.error(f"Following .env variable's missing : {str(e)}")

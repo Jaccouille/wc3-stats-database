@@ -16,20 +16,22 @@ import os
 from dotenv import load_dotenv
 import sys
 
+logger = getLogger(__name__)
+
 load_dotenv()
 
 try:
-    DB_NAME = os.environ['DB_NAME']
-    USER = os.environ['DB_USER']
-    PASS = os.environ['DB_PASSWORD']
-    HOST = os.environ['DB_HOST']
+    DB_NAME = os.environ["DB_NAME"]
+    USER = os.environ["DB_USER"]
+    PASS = os.environ["DB_PASSWORD"]
+    HOST = os.environ["DB_HOST"]
 except KeyError as e:
     logger.error(f"Following .env variable's missing : {str(e)}")
     sys.exit()
 
-logger = getLogger(__name__)
 
 Base = declarative_base()
+
 
 class DailyRecord(Base):
     __tablename__ = "daily_record"
@@ -52,6 +54,7 @@ def drop_table(conn, tablename, engine):
     table = Table(tablename, meta, autoload_with=engine)
     table.drop(checkfirst=True)
 
+
 def init_table(engine):
     try:
         DailyRecord.__table__.create(engine, checkfirst=True)
@@ -59,6 +62,7 @@ def init_table(engine):
         logger.error(str(e))
     else:
         logger.info(f"Created table {DailyRecord.__tablename__}")
+
 
 def init_database(engine):
     try:
@@ -68,8 +72,11 @@ def init_database(engine):
     else:
         logger.info(f"Created database {DB_NAME}")
 
+
 def insert_daily_record(daily_record):
-    engine = create_engine(f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}")
+    engine = create_engine(
+        f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}"
+    )
     if not database_exists(engine.url):
         init_database(engine)
 
