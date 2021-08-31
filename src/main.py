@@ -59,7 +59,7 @@ def request_game_record(record_limit):
         for record in body:
             record["date"] = date.today()
 
-        with open(f"{str(date.today())}.json", "w") as f:
+        with open(str(log_dir / f"{str(date.today())}.json"), "w") as f:
             json.dump(response.json(), f, indent=4)
 
         try:
