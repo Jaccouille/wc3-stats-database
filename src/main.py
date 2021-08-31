@@ -4,9 +4,16 @@ from datetime import date
 from urllib.parse import urlencode, quote
 from record_table import insert_daily_record
 import logging
+import os
+from pathlib import Path
+
+log_dir = Path(__file__).parent / "logs"
+
+if not log_dir.is_dir():
+    log_dir.mkdir()
 
 logging.basicConfig(
-    filename="daily_record.log",
+    filename= str(log_dir / "daily_record.log"),
     format="%(asctime)s:%(levelname)s:%(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.DEBUG,
