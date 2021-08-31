@@ -35,6 +35,9 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '*~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
+clean-json: ## remove json file
+	find . -name '*.json' -exec rm -f {} +
+
 lint: ## check style with flake8
 	flake8 $(APP_DIR)
 
