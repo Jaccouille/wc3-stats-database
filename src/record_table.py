@@ -12,12 +12,22 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 from logging import getLogger
+import os
+from dotenv import load_dotenv
+import sys
+
+load_dotenv()
+
+try:
+    DB_NAME = os.environ['DB_NAME']
+    USER = os.environ['DB_USER']
+    PASS = os.environ['DB_PASSWORD']
+    HOST = os.environ['DB_HOST']
+except KeyError as e:
+    logger.error(f"Following .env variable's missing : {str(e)}")
+    sys.exit()
 
 logger = getLogger(__name__)
-
-DB_NAME = "testdb2"
-USER = "jaccouille"
-PASS = "root"
 
 Base = declarative_base()
 
@@ -59,7 +69,7 @@ def init_database(engine):
         logger.info(f"Created database {DB_NAME}")
 
 def insert_daily_record(daily_record):
-    engine = create_engine(f"postgresql+psycopg2://{USER}:{PASS}@localhost/{DB_NAME}")
+    engine = create_engine(f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}")
     if not database_exists(engine.url):
         init_database(engine)
 

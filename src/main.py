@@ -6,6 +6,9 @@ from record_table import insert_daily_record
 import logging
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import sys
+
 
 log_dir = Path(__file__).parent / "logs"
 
@@ -21,12 +24,18 @@ logging.basicConfig(
 
 logger = logging.getLogger("__name__")
 
-URL_ARGS = {
-    "map": "Footmen Vs Grunts",
-    "season": "Season 5",
-    "limit": 15,
-    "mode": "Regular",
-}
+load_dotenv()
+
+try:
+    URL_ARGS = {
+        "map":  os.environ["MAP"],
+        "season":  os.environ["SEASON"],
+        "limit":  os.environ["LIMIT"],
+        "mode":  os.environ["MODE"],
+    }
+except KeyError as e:
+    logger.error(f"Following .env variable's missing : {str(e)}")
+    sys.exit()
 
 URL = "https://api.wc3stats.com/leaderboard&"
 RECORD_LIMIT = 15
