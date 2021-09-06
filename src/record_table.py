@@ -5,6 +5,7 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
+    Unicode,
     MetaData,
     Date,
     UniqueConstraint,
@@ -15,8 +16,7 @@ from logging import getLogger
 import os
 from dotenv import load_dotenv
 import sys
-
-logger = getLogger(__name__)
+from src.config import logger
 
 load_dotenv()
 
@@ -37,7 +37,8 @@ class DailyRecord(Base):
     __tablename__ = "daily_record"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    # name = Column(String(collation='utf8'))
+    name = Column(Unicode)
     wins = Column(Integer)
     losses = Column(Integer)
     rank = Column(Integer)
@@ -63,6 +64,14 @@ def init_table(engine):
     else:
         logger.info(f"Created table {DailyRecord.__tablename__}")
 
+def clear_table(engine):
+    try:
+        DailyRecord.__table__.delete().execute()
+    except Exception as e:
+        logger.error(str(e))
+    else:
+        logger.info(f"Created table {DailyRecord.__tablename__}")
+
 
 def init_database(engine):
     try:
@@ -76,7 +85,7 @@ def init_database(engine):
 def insert_daily_record(daily_record):
     engine = create_engine(
         f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}"
-    )
+        )
     if not database_exists(engine.url):
         init_database(engine)
 
@@ -85,3 +94,14 @@ def insert_daily_record(daily_record):
 
     with engine.connect() as conn:
         conn.execute(DailyRecord.__table__.insert(), daily_record)
+
+# test =         {
+#             "name": "\ud788\ud2b8#31126",
+#             "played": 25,
+#             "wins": 21,
+#             "losses": 4,
+#             "rating": 1186,
+#             "lastChange": 12,
+#             "rank": 18
+#         },
+# insert_daily_record(test)

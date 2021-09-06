@@ -1,28 +1,17 @@
+from logging import log
 import requests
 import json
 from datetime import date
 from urllib.parse import urlencode, quote
-from record_table import insert_daily_record
-import logging
+from src.record_table import insert_daily_record
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 import sys
+from src.config import logger, log_dir
+import schedule
+import time
 
-
-log_dir = Path(__file__).parent / "logs"
-
-if not log_dir.is_dir():
-    log_dir.mkdir()
-
-logging.basicConfig(
-    filename=str(log_dir / "daily_record.log"),
-    format="%(asctime)s:%(levelname)s:%(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level=logging.DEBUG,
-)
-
-logger = logging.getLogger("__name__")
 
 load_dotenv()
 
@@ -38,10 +27,9 @@ except KeyError as e:
     sys.exit()
 
 URL = "https://api.wc3stats.com/leaderboard&"
-RECORD_LIMIT = 15
 
 
-def request_game_record(record_limit):
+def request_game_record():
 
     # quote_via=quote replace " " by "%20"
     http_address = URL + urlencode(URL_ARGS, quote_via=quote)
@@ -69,5 +57,14 @@ def request_game_record(record_limit):
             logger.error(str(e))
 
 
-request_game_record(RECORD_LIMIT)
-# schedule.every().day.at("00:00").do(request_game_record)
+def main():
+    # schedule.every().day.at("00:00").do(request_game_record)
+    schedule.every(10).seconds.do(request_game_record)
+
+    logger.info("Starting scheduler")
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+    logger.info("Closing scheduler")
