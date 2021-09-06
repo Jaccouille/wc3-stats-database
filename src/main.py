@@ -1,11 +1,9 @@
-from logging import log
 import requests
 import json
 from datetime import date
 from urllib.parse import urlencode, quote
 from src.record_table import insert_daily_record
 import os
-from pathlib import Path
 from dotenv import load_dotenv
 import sys
 from src.config import logger, log_dir

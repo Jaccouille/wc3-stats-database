@@ -4,7 +4,6 @@ from sqlalchemy import (
     Table,
     Column,
     Integer,
-    String,
     Unicode,
     MetaData,
     Date,
@@ -12,7 +11,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
-from logging import getLogger
 import os
 from dotenv import load_dotenv
 import sys
@@ -64,6 +62,7 @@ def init_table(engine):
     else:
         logger.info(f"Created table {DailyRecord.__tablename__}")
 
+
 def clear_table(engine):
     try:
         DailyRecord.__table__.delete().execute()
@@ -85,7 +84,7 @@ def init_database(engine):
 def insert_daily_record(daily_record):
     engine = create_engine(
         f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}"
-        )
+    )
     if not database_exists(engine.url):
         init_database(engine)
 
@@ -94,6 +93,7 @@ def insert_daily_record(daily_record):
 
     with engine.connect() as conn:
         conn.execute(DailyRecord.__table__.insert(), daily_record)
+
 
 # test =         {
 #             "name": "\ud788\ud2b8#31126",
