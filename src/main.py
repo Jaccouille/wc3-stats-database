@@ -56,8 +56,7 @@ def request_game_record():
 
 
 def main():
-    # schedule.every().day.at("00:00").do(request_game_record)
-    schedule.every(10).seconds.do(request_game_record)
+    schedule.every().day.at("00:00").do(request_game_record)
 
     logger.info("Starting scheduler")
 
