@@ -15,7 +15,8 @@ venv:
 	venv/bin/pip install -e .
 
 run-dev: ## launch main frame entry point
-	texture-painter
+	python setup.py install
+	start-scheduler
 
 clean: clean-build clean-pyc ## remove all build, test, coverage and Python artifacts
 
