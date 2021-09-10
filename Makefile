@@ -5,9 +5,6 @@ SHELL := /bin/zsh
 
 APP_DIR = src
 
-test:
-	. venv/bin/activate
-
 venv:
 	python3 -m venv venv && source venv/bin/activate
 	venv/bin/pip install --upgrade pip wheel
@@ -17,6 +14,9 @@ venv:
 run-dev: ## launch main frame entry point
 	python setup.py install
 	start-scheduler
+
+setup-dev: venv
+	venv/bin/pip install --upgrade -r requirements.dev.txt
 
 clean: clean-build clean-pyc ## remove all build, test, coverage and Python artifacts
 
