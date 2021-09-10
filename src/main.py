@@ -3,22 +3,36 @@ import json
 from datetime import date
 from urllib.parse import urlencode, quote
 from src.record_table import insert_daily_record
-import os
-from dotenv import load_dotenv
 import sys
-from src.config import logger, log_dir
 import schedule
 import time
+import logging
+from pathlib import Path
+from src.config import config
 
+log_dir = Path().absolute() / "logs"
 
-load_dotenv()
+if not log_dir.is_dir():
+    log_dir.mkdir()
+
+logging.basicConfig(
+    format="%(asctime)s:%(levelname)s:%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.DEBUG,
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(str(log_dir / "daily_record.log")),
+    ],
+)
+
+logger = logging.getLogger(__name__)
 
 try:
     URL_ARGS = {
-        "map": os.environ["MAP"],
-        "season": os.environ["SEASON"],
-        "limit": os.environ["LIMIT"],
-        "mode": os.environ["MODE"],
+        "map": config.get("URL_ARGS", "MAP"),
+        "season": config.get("URL_ARGS", "SEASON"),
+        "limit": config.get("URL_ARGS", "LIMIT"),
+        "mode": config.get("URL_ARGS", "MODE"),
     }
 except KeyError as e:
     logger.error(f"Following .env variable's missing : {str(e)}")
@@ -56,6 +70,7 @@ def request_game_record():
 
 
 def main():
+
     schedule.every().day.at("00:00").do(request_game_record)
 
     logger.info("Starting scheduler")

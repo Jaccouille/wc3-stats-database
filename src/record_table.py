@@ -11,18 +11,18 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
-import os
-from dotenv import load_dotenv
 import sys
-from src.config import logger
+from logging import getLogger
+from .config import config
 
-load_dotenv()
+
+logger = getLogger(__name__)
 
 try:
-    DB_NAME = os.environ["DB_NAME"]
-    USER = os.environ["DB_USER"]
-    PASS = os.environ["DB_PASSWORD"]
-    HOST = os.environ["DB_HOST"]
+    DB_NAME = config.get("DATABASE", "DB_NAME")
+    USER = config.get("DATABASE", "DB_USER")
+    PASS = config.get("DATABASE", "DB_PASSWORD")
+    HOST = config.get("DATABASE", "DB_HOST")
 except KeyError as e:
     logger.error(f"Following .env variable's missing : {str(e)}")
     sys.exit()

@@ -149,3 +149,6 @@ cython_debug/
 
 # JSON dump
 *.json
+
+# INI file
+*.ini
