@@ -21,9 +21,19 @@ the postgres user
 
 You should now be able to run `psql -l` with your account
 
-You need to create a .env file containing following data to set up the project configuration::
+You need to create a `config.ini` file at the root directory of the project containing 
+following variable to set up the project configuration::
 
+   [DATABASE]
    DB_USERNAME="username"
    DB_PASSWORD="password"
    DB_ADDRESS="address of the database"
    DB_NAME="name of the dabatase"
+
+   [URL_ARGS]
+   MAP = "map name"
+   SEASON = "which season to get stats from"
+   LIMIT = "record limit"
+   MODE = "game mode"
+
+Check https://wc3stats.com/docs/api for more details on URL_ARGS

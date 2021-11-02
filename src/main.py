@@ -12,6 +12,7 @@ from src.config import config
 
 log_dir = Path().absolute() / "logs"
 
+# Create a directory to save log files
 if not log_dir.is_dir():
     log_dir.mkdir()
 
@@ -35,7 +36,7 @@ try:
         "mode": config.get("URL_ARGS", "MODE"),
     }
 except KeyError as e:
-    logger.error(f"Following .env variable's missing : {str(e)}")
+    logger.error(f"Following variable's missing from config file : {str(e)}")
     sys.exit()
 
 URL = "https://api.wc3stats.com/leaderboard&"
@@ -43,7 +44,7 @@ URL = "https://api.wc3stats.com/leaderboard&"
 
 def request_game_record():
 
-    # quote_via=quote replace " " by "%20"
+    # quote_via=quote parameter replace " " character by "%20"
     http_address = URL + urlencode(URL_ARGS, quote_via=quote)
 
     try:
@@ -54,7 +55,7 @@ def request_game_record():
         return
     else:
         body = response.json().get("body")
-        logger.info(f"received json body with {len(body)} records")
+        logger.info(f"Received json body with {len(body)} records")
 
         for record in body:
             record["date"] = date.today()
@@ -67,10 +68,11 @@ def request_game_record():
             logger.info(f"Inserted {len(body)} record on {date.today()}")
         except Exception as e:
             logger.error(str(e))
-
+            return
 
 def main():
 
+    # Request game record every day at 00:00 AM
     schedule.every().day.at("00:00").do(request_game_record)
 
     logger.info("Starting scheduler")

@@ -9,11 +9,12 @@ from sqlalchemy import (
     Date,
     UniqueConstraint,
 )
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 import sys
 from logging import getLogger
-from .config import config
+from src.config import config
 
 
 logger = getLogger(__name__)
@@ -35,7 +36,6 @@ class DailyRecord(Base):
     __tablename__ = "daily_record"
 
     id = Column(Integer, primary_key=True)
-    # name = Column(String(collation='utf8'))
     name = Column(Unicode)
     wins = Column(Integer)
     losses = Column(Integer)
@@ -94,6 +94,11 @@ def insert_daily_record(daily_record):
     with engine.connect() as conn:
         conn.execute(DailyRecord.__table__.insert(), daily_record)
 
+
+engine = create_engine(f"postgresql+psycopg2://{USER}:{PASS}@{HOST}/{DB_NAME}")
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 # test =         {
 #             "name": "\ud788\ud2b8#31126",
